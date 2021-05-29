@@ -45,6 +45,9 @@ public class EmployerManager implements EmployerService {
 		else if(emailService.verifyTheVerificationCode(null)){
 			return new ErrorResult(Messages.notVerifyMail);
 		}
+		else if(!employer.isStatus()) {
+			return new ErrorResult(Messages.weCanTVerifyYourAccount);
+		}
 		else {
 			this.employerDao.save(employer);
 			return new SuccessResult(Messages.successfullyAdded);
