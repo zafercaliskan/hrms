@@ -7,7 +7,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import kodlamaio.hrms.business.abstracts.EmployerService;
+import kodlamaio.hrms.business.constants.Messages;
+import kodlamaio.hrms.core.utilities.StringExtensions;
 import kodlamaio.hrms.core.utilities.results.DataResult;
+import kodlamaio.hrms.core.utilities.results.ErrorResult;
 import kodlamaio.hrms.core.utilities.results.Result;
 import kodlamaio.hrms.core.utilities.results.SuccessDataResult;
 import kodlamaio.hrms.core.utilities.results.SuccessResult;
@@ -16,7 +19,7 @@ import kodlamaio.hrms.entities.concretes.Employer;
 
 @Service
 public class EmployerManager implements EmployerService {
-	
+
 	private EmployerDao employerDao;
 
 	@Autowired
@@ -27,8 +30,14 @@ public class EmployerManager implements EmployerService {
 
 	@Override
 	public Result add(Employer employer) {
-		employerDao.save(employer);
-		return new SuccessResult("İşveren eklendi.");
+		if (!StringExtensions.isNullOrEmpty(employer.getEmail(), employer.getWebSite(), employer.getEmail(),
+				employer.getPasswordHash(), employer.getCompanyName())) {
+			return new ErrorResult(Messages.requiredFields);
+		} else {
+			this.employerDao.save(employer);
+			return new SuccessResult(Messages.successfullyAdded);
+		}
+
 	}
 
 	@Override
@@ -43,7 +52,7 @@ public class EmployerManager implements EmployerService {
 	}
 
 	@Override
-	public DataResult<List<Employer>> getAll() {	
+	public DataResult<List<Employer>> getAll() {
 		return new SuccessDataResult<List<Employer>>(employerDao.findAll(), "İşverenler listelendi.");
 	}
 }

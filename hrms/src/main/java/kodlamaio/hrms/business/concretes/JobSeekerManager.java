@@ -55,7 +55,7 @@ public class JobSeekerManager implements JobSeekerService {
 		}
 		else {
 			jobSeekerDao.save(jobSeeker);
-			return new SuccessResult("İş arayan eklendi.");
+			return new SuccessResult(Messages.successfullyAdded);
 		}
 	}
 
