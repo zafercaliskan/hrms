@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import kodlamaio.hrms.business.abstracts.JobSeekerService;
 import kodlamaio.hrms.business.constants.Messages;
+import kodlamaio.hrms.core.abstracts.VerificationService;
 import kodlamaio.hrms.core.utilities.StringExtensions;
 import kodlamaio.hrms.core.utilities.results.DataResult;
 import kodlamaio.hrms.core.utilities.results.ErrorResult;
@@ -21,11 +22,13 @@ import kodlamaio.hrms.entities.concretes.JobSeeker;
 public class JobSeekerManager implements JobSeekerService {
 
 	private JobSeekerDao jobSeekerDao;
+	private VerificationService verificationService;
 
 	@Autowired
-	public JobSeekerManager(JobSeekerDao jobSeekerDao) {
+	public JobSeekerManager(JobSeekerDao jobSeekerDao, VerificationService verificationService, EmailService emailService) {
 		super();
 		this.jobSeekerDao = jobSeekerDao;
+		this.verificationService = verificationService;
 	}
 
 	@Override
@@ -35,6 +38,9 @@ public class JobSeekerManager implements JobSeekerService {
 				String.valueOf(jobSeeker.getDateOfBirth().getYear()))) {
 			return new ErrorResult(Messages.requiredFields);
 
+		} else if (!verificationService.isItARealPerson(jobSeeker)) {
+			return new ErrorResult(Messages.notExistGovernment);
+		}
 
 		else {
 			jobSeekerDao.save(jobSeeker);
