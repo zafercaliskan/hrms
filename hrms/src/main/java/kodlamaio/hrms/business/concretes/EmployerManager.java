@@ -2,6 +2,7 @@ package kodlamaio.hrms.business.concretes;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.regex.Pattern;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -33,7 +34,11 @@ public class EmployerManager implements EmployerService {
 		if (!StringExtensions.isNullOrEmpty(employer.getEmail(), employer.getWebSite(), employer.getEmail(),
 				employer.getPasswordHash(), employer.getCompanyName())) {
 			return new ErrorResult(Messages.requiredFields);
-		} else {
+		}
+		else if(!isCompanyEmail(employer.getEmail(), employer.getWebSite())) {
+			return new ErrorResult(Messages.wrongMailFormat);
+		}
+		else {
 			this.employerDao.save(employer);
 			return new SuccessResult(Messages.successfullyAdded);
 		}
@@ -55,4 +60,22 @@ public class EmployerManager implements EmployerService {
 	public DataResult<List<Employer>> getAll() {
 		return new SuccessDataResult<List<Employer>>(employerDao.findAll(), "İşverenler listelendi.");
 	}
+	
+    private boolean isCompanyEmail(String email, String webSite) {
+
+        if (email == null || email.isEmpty()) return false;
+
+        String[] array = webSite.split(".");
+
+        String finalString = "";
+
+        for (int i = 1; i < array.length; i++) {
+            finalString += array[i];
+        }
+
+        String emailRegex = "info@" + finalString;
+        Pattern pattern = Pattern.compile(emailRegex);
+
+        return pattern.matcher(email).matches();
+    }
 }
