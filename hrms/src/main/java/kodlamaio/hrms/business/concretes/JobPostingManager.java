@@ -7,7 +7,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import kodlamaio.hrms.business.abstracts.JobPostingService;
+import kodlamaio.hrms.business.constants.Messages;
 import kodlamaio.hrms.core.utilities.results.DataResult;
+import kodlamaio.hrms.core.utilities.results.ErrorResult;
 import kodlamaio.hrms.core.utilities.results.Result;
 import kodlamaio.hrms.core.utilities.results.SuccessDataResult;
 import kodlamaio.hrms.core.utilities.results.SuccessResult;
@@ -18,7 +20,7 @@ import kodlamaio.hrms.entities.concretes.JobPosting;
 public class JobPostingManager implements JobPostingService {
 
 	private JobPostingDao jobPostingDao;
-	
+
 	@Autowired
 	public JobPostingManager(JobPostingDao jobPostingDao) {
 		super();
@@ -27,8 +29,12 @@ public class JobPostingManager implements JobPostingService {
 
 	@Override
 	public Result add(JobPosting jobPosting) {
-		jobPostingDao.save(jobPosting);
-		return new SuccessResult("İş ilanı eklendi.");
+		if (this.jobPostingDao.findByPosition(jobPosting.getPosition()) != null) {
+			return new ErrorResult(Messages.existInRecords);
+		} else {
+			jobPostingDao.save(jobPosting);
+			return new ErrorResult(Messages.existInRecords);
+		}
 	}
 
 	@Override
@@ -39,7 +45,7 @@ public class JobPostingManager implements JobPostingService {
 
 	@Override
 	public DataResult<Optional<JobPosting>> get(int id) {
-		return new SuccessDataResult<Optional<JobPosting>>(jobPostingDao.findById(id), "İş ilanı listelendi.") ;
+		return new SuccessDataResult<Optional<JobPosting>>(jobPostingDao.findById(id), "İş ilanı listelendi.");
 	}
 
 	@Override
