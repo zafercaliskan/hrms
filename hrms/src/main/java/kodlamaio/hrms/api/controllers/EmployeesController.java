@@ -6,12 +6,15 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import kodlamaio.hrms.business.abstracts.EmployeeService;
+import kodlamaio.hrms.core.utilities.results.DataResult;
+import kodlamaio.hrms.core.utilities.results.Result;
 import kodlamaio.hrms.entities.concretes.Employee;
 
 @RestController
@@ -26,22 +29,22 @@ public class EmployeesController {
 	}
 	
 	@PostMapping("/add")
-	public void add(@RequestBody Employee employee){
-		employeeService.add(employee);		
+	public Result add(@RequestBody Employee employee){
+		return this.employeeService.add(employee);			
 	}
 	
-	@DeleteMapping("/delete")
-	public void delete(@RequestBody int id) {
-		employeeService.delete(id);
+	@DeleteMapping("/delete/{id}")
+	public Result delete(@PathVariable int id) {
+		return this.employeeService.delete(id);
 	}
 	
-	@GetMapping("/get")
-	public Optional<Employee> get(@RequestBody int id) {
+	@GetMapping("/get/{id}")
+	public DataResult<Optional<Employee>> get(@PathVariable int id) {
 		return employeeService.get(id);		
 	}
 	
 	@GetMapping("/getall")
-	public List<Employee> getAll(){
+	public DataResult<List<Employee>> getAll(){
 		return employeeService.getAll();
 	}	
 }
