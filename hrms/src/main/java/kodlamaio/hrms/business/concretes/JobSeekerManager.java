@@ -42,6 +42,10 @@ public class JobSeekerManager implements JobSeekerService {
 			return new ErrorResult(Messages.notExistGovernment);
 		}
 
+		else if (this.jobSeekerDao.findByEmail(jobSeeker.getEmail()) != null
+				|| this.jobSeekerDao.findByIdentityNumber(jobSeeker.getIdentityNumber()) != null) {
+			return new ErrorResult(Messages.existInSystem);
+		}
 		else {
 			jobSeekerDao.save(jobSeeker);
 			return new SuccessResult("İş arayan eklendi.");
