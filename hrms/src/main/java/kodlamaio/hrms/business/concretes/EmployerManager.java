@@ -34,15 +34,16 @@ public class EmployerManager implements EmployerService {
 		if (!StringExtensions.isNullOrEmpty(employer.getEmail(), employer.getWebSite(), employer.getEmail(),
 				employer.getPasswordHash(), employer.getCompanyName())) {
 			return new ErrorResult(Messages.requiredFields);
-		}
-		else if(!isCompanyEmail(employer.getEmail(), employer.getWebSite())) {
+		} else if (!isCompanyEmail(employer.getEmail(), employer.getWebSite())) {
 			return new ErrorResult(Messages.wrongMailFormat);
+		} else if (this.employerDao.findByEmail(employer.getEmail()) != null) {
+			return new ErrorResult(Messages.existInSystem);
+		} 
 		}
 		else {
 			this.employerDao.save(employer);
 			return new SuccessResult(Messages.successfullyAdded);
 		}
-
 	}
 
 	@Override
@@ -60,22 +61,23 @@ public class EmployerManager implements EmployerService {
 	public DataResult<List<Employer>> getAll() {
 		return new SuccessDataResult<List<Employer>>(employerDao.findAll(), "İşverenler listelendi.");
 	}
-	
-    private boolean isCompanyEmail(String email, String webSite) {
 
-        if (email == null || email.isEmpty()) return false;
+	private boolean isCompanyEmail(String email, String webSite) {
 
-        String[] array = webSite.split(".");
+		if (email == null || email.isEmpty())
+			return false;
 
-        String finalString = "";
+		String[] array = webSite.split(".");
 
-        for (int i = 1; i < array.length; i++) {
-            finalString += array[i];
-        }
+		String finalString = "";
 
-        String emailRegex = "info@" + finalString;
-        Pattern pattern = Pattern.compile(emailRegex);
+		for (int i = 1; i < array.length; i++) {
+			finalString += array[i];
+		}
 
-        return pattern.matcher(email).matches();
-    }
+		String emailRegex = "info@" + finalString;
+		Pattern pattern = Pattern.compile(emailRegex);
+
+		return pattern.matcher(email).matches();
+	}
 }
