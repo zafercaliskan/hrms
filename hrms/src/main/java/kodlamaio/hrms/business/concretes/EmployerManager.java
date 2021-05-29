@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import kodlamaio.hrms.business.abstracts.EmployerService;
 import kodlamaio.hrms.business.constants.Messages;
+import kodlamaio.hrms.core.abstracts.EmailService;
 import kodlamaio.hrms.core.utilities.StringExtensions;
 import kodlamaio.hrms.core.utilities.results.DataResult;
 import kodlamaio.hrms.core.utilities.results.ErrorResult;
@@ -22,11 +23,13 @@ import kodlamaio.hrms.entities.concretes.Employer;
 public class EmployerManager implements EmployerService {
 
 	private EmployerDao employerDao;
-
+	private EmailService emailService;
+	
 	@Autowired
-	public EmployerManager(EmployerDao employerDao) {
+	public EmployerManager(EmployerDao employerDao, EmailService emailService) {
 		super();
 		this.employerDao = employerDao;
+		this.emailService = emailService;
 	}
 
 	@Override
@@ -39,6 +42,8 @@ public class EmployerManager implements EmployerService {
 		} else if (this.employerDao.findByEmail(employer.getEmail()) != null) {
 			return new ErrorResult(Messages.existInSystem);
 		} 
+		else if(emailService.verifyTheVerificationCode(null)){
+			return new ErrorResult(Messages.notVerifyMail);
 		}
 		else {
 			this.employerDao.save(employer);
