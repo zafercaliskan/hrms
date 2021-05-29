@@ -7,6 +7,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import kodlamaio.hrms.business.abstracts.EmployeeService;
+import kodlamaio.hrms.core.utilities.results.DataResult;
+import kodlamaio.hrms.core.utilities.results.Result;
+import kodlamaio.hrms.core.utilities.results.SuccessDataResult;
+import kodlamaio.hrms.core.utilities.results.SuccessResult;
 import kodlamaio.hrms.dataAccess.abstracts.EmployeeDao;
 import kodlamaio.hrms.entities.concretes.Employee;
 
@@ -22,23 +26,25 @@ public class EmployeeManager implements EmployeeService {
 	}
 
 	@Override
-	public void add(Employee employee) {
-		employeDao.save(employee);		
+	public Result add(Employee employee) {
+		employeDao.save(employee);	
+		return new SuccessResult("Çalışan eklendi.");
 	}
 
 	@Override
-	public void delete(int id) {
+	public Result delete(int id) {
 		employeDao.deleteById(id);
+		return new SuccessResult("Çalışan silindi.");
 	}
 
 	@Override
-	public Optional<Employee> get(int id) {
-		return employeDao.findById(id);
+	public DataResult<Optional<Employee>> get(int id) {
+		return new SuccessDataResult<Optional<Employee>>(employeDao.findById(id), "Çalışan listelendi.");
 	}
 
 	@Override
-	public List<Employee> getAll() {
-		return employeDao.findAll();
+	public DataResult<List<Employee>> getAll() {
+		
+		return new SuccessDataResult<List<Employee>>(employeDao.findAll(), "Çalışanlar listelendi."); 
 	}
-
 }
