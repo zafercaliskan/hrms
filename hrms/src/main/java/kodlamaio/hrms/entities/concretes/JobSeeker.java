@@ -26,6 +26,6 @@ public class JobSeeker extends User {
 	@Column(name="date_of_birth")
 	private LocalDate dateOfBirth;
 	
-	@Column(name="identity_number")
+	@Column(name="identity_number", unique = true)
 	private String identityNumber;
 }
