@@ -7,7 +7,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import kodlamaio.hrms.business.abstracts.JobSeekerService;
+import kodlamaio.hrms.business.constants.Messages;
+import kodlamaio.hrms.core.utilities.StringExtensions;
 import kodlamaio.hrms.core.utilities.results.DataResult;
+import kodlamaio.hrms.core.utilities.results.ErrorResult;
 import kodlamaio.hrms.core.utilities.results.Result;
 import kodlamaio.hrms.core.utilities.results.SuccessDataResult;
 import kodlamaio.hrms.core.utilities.results.SuccessResult;
@@ -16,7 +19,7 @@ import kodlamaio.hrms.entities.concretes.JobSeeker;
 
 @Service
 public class JobSeekerManager implements JobSeekerService {
-	
+
 	private JobSeekerDao jobSeekerDao;
 
 	@Autowired
@@ -27,20 +30,27 @@ public class JobSeekerManager implements JobSeekerService {
 
 	@Override
 	public Result add(JobSeeker jobSeeker) {
-		jobSeekerDao.save(jobSeeker);		
-		return new SuccessResult("İş arayan eklendi.");
-		
+		if (StringExtensions.isNullOrEmpty(jobSeeker.getEmail(), jobSeeker.getFirstName(), jobSeeker.getLastName(),
+				jobSeeker.getIdentityNumber(), jobSeeker.getPasswordHash(), jobSeeker.getPasswordSalt(),
+				String.valueOf(jobSeeker.getDateOfBirth().getYear()))) {
+			return new ErrorResult(Messages.requiredFields);
+
+
+		else {
+			jobSeekerDao.save(jobSeeker);
+			return new SuccessResult("İş arayan eklendi.");
+		}
 	}
 
 	@Override
 	public Result delete(int id) {
 		jobSeekerDao.deleteById(id);
 		return new SuccessResult("İş arayan silindi.");
-		
+
 	}
 
 	@Override
-	public DataResult<Optional<JobSeeker>> get(int id) {		
+	public DataResult<Optional<JobSeeker>> get(int id) {
 		return new SuccessDataResult<Optional<JobSeeker>>(jobSeekerDao.findById(id), "İş arayan listelendi.");
 	}
 
