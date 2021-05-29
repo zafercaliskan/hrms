@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import kodlamaio.hrms.business.abstracts.JobSeekerService;
 import kodlamaio.hrms.business.constants.Messages;
+import kodlamaio.hrms.core.abstracts.EmailService;
 import kodlamaio.hrms.core.abstracts.VerificationService;
 import kodlamaio.hrms.core.utilities.StringExtensions;
 import kodlamaio.hrms.core.utilities.results.DataResult;
@@ -23,12 +24,14 @@ public class JobSeekerManager implements JobSeekerService {
 
 	private JobSeekerDao jobSeekerDao;
 	private VerificationService verificationService;
+	private EmailService emailService;
 
 	@Autowired
 	public JobSeekerManager(JobSeekerDao jobSeekerDao, VerificationService verificationService, EmailService emailService) {
 		super();
 		this.jobSeekerDao = jobSeekerDao;
 		this.verificationService = verificationService;
+		this.emailService = emailService;
 	}
 
 	@Override
@@ -45,6 +48,10 @@ public class JobSeekerManager implements JobSeekerService {
 		else if (this.jobSeekerDao.findByEmail(jobSeeker.getEmail()) != null
 				|| this.jobSeekerDao.findByIdentityNumber(jobSeeker.getIdentityNumber()) != null) {
 			return new ErrorResult(Messages.existInSystem);
+		}
+
+		else if(!emailService.verifyTheVerificationCode(null)) {
+			return new ErrorResult(Messages.notVerifyMail);
 		}
 		else {
 			jobSeekerDao.save(jobSeeker);
