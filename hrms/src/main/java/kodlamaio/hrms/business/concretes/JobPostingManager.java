@@ -33,7 +33,7 @@ public class JobPostingManager implements JobPostingService {
 			return new ErrorResult(Messages.existInRecords);
 		} else {
 			jobPostingDao.save(jobPosting);
-			return new ErrorResult(Messages.existInRecords);
+			return new SuccessResult(Messages.successfullyAdded);
 		}
 	}
 
