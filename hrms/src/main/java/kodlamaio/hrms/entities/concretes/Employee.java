@@ -15,7 +15,7 @@ import lombok.EqualsAndHashCode;
 @Table(name = "employees")
 
 public class Employee extends User {
-	@Column(name="identity_number")
+	@Column(name="identity_number", unique = true)
 	private String identityNumber;
 	
 	@Column(name="first_name")

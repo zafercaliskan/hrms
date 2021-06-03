@@ -13,6 +13,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import kodlamaio.hrms.business.abstracts.JobPostingService;
+import kodlamaio.hrms.core.utilities.results.DataResult;
+import kodlamaio.hrms.core.utilities.results.Result;
 import kodlamaio.hrms.entities.concretes.JobPosting;
 
 @RestController
@@ -27,22 +29,22 @@ public class JobPostingsController {
 	}
 	
 	@PostMapping
-	public void add(@RequestBody JobPosting jobPosting) {
-		jobPostingService.add(jobPosting);		
+	public Result add(@RequestBody JobPosting jobPosting) {
+		return this.jobPostingService.add(jobPosting);		
 	}
 	
 	@DeleteMapping("{id}")
-	public void delete(@PathVariable int id) {
-		jobPostingService.delete(id);
+	public Result delete(@PathVariable int id) {
+		return this.jobPostingService.delete(id);
 	}
 	
 	@GetMapping("{id}")
-	public Optional<JobPosting> get(@PathVariable int id){
+	public DataResult<Optional<JobPosting>> get(@PathVariable int id){
 		return jobPostingService.get(id);
 	}
 	
 	@GetMapping
-	public List<JobPosting> getAll(){
+	public DataResult<List<JobPosting>> getAll(){
 		return jobPostingService.getAll();
 	}
 }
