@@ -26,18 +26,18 @@ public abstract class User {
 	@Column(name = "email", unique = true)
 	private String email;
 
-	@Column(name = "password_hash")
+	@Column(name = "password_hash", nullable = false)
 	private String passwordHash;
 
-	@Column(name = "password_salt")
+	@Column(name = "password_salt", nullable = false)
 	private String passwordSalt;
 
-	@Column(name = "created_on")
+	@Column(name = "created_on", nullable = false)
 	private LocalDate createdOn;
 
-	@Column(name = "last_modified_on")
+	@Column(name = "last_modified_on", nullable = false)
 	private LocalDate lastModifiedOn;
 
-	@Column(name = "is_activated")
+	@Column(name = "is_activated", nullable = false)
 	private boolean isActivated;
 }

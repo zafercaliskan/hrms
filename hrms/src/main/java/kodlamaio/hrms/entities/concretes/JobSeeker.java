@@ -14,16 +14,16 @@ import lombok.EqualsAndHashCode;
 @Entity
 @Table(name = "job_seekers")
 public class JobSeeker extends User {
-	@Column(name="first_name")
+	@Column(name="first_name", nullable = false)
 	private String firstName;
 	
-	@Column(name="last_name")
+	@Column(name="last_name", nullable = false)
 	private String lastName;
 	
-	@Column(name="gender")
+	@Column(name="gender", nullable = false)
 	private String gender;
 	
-	@Column(name="date_of_birth")
+	@Column(name="date_of_birth", nullable = false)
 	private LocalDate dateOfBirth;
 	
 	@Column(name="identity_number", unique = true)

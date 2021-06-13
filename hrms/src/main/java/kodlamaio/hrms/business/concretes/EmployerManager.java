@@ -24,7 +24,7 @@ public class EmployerManager implements EmployerService {
 
 	private EmployerDao employerDao;
 	private EmailService emailService;
-	
+
 	@Autowired
 	public EmployerManager(EmployerDao employerDao, EmailService emailService) {
 		super();
@@ -34,21 +34,14 @@ public class EmployerManager implements EmployerService {
 
 	@Override
 	public Result add(Employer employer) {
-		if (!StringExtensions.isNullOrEmpty(employer.getEmail(), employer.getWebSite(), employer.getEmail(),
-				employer.getPasswordHash(), employer.getCompanyName())) {
-			return new ErrorResult(Messages.requiredFields);
-		} else if (!isCompanyEmail(employer.getEmail(), employer.getWebSite())) {
+
+		if (!isCompanyEmail(employer.getEmail(), employer.getWebSite())) {
 			return new ErrorResult(Messages.wrongMailFormat);
-		} else if (this.employerDao.findByEmail(employer.getEmail()) != null) {
-			return new ErrorResult(Messages.existInSystem);
-		} 
-		else if(emailService.verifyTheVerificationCode(null)){
+		} else if (!emailService.verifyTheVerificationCode(null)) {
 			return new ErrorResult(Messages.notVerifyMail);
-		}
-		else if(!employer.isStatus()) {
+		} else if (!employer.isStatus()) {
 			return new ErrorResult(Messages.weCanTVerifyYourAccount);
-		}
-		else {
+		} else {
 			this.employerDao.save(employer);
 			return new SuccessResult(Messages.successfullyAdded);
 		}
@@ -72,20 +65,17 @@ public class EmployerManager implements EmployerService {
 
 	private boolean isCompanyEmail(String email, String webSite) {
 
-		if (email == null || email.isEmpty())
+		if (email == null || email.isEmpty()) {
 			return false;
+		} else {
+			String[] array = webSite.split("www.");
 
-		String[] array = webSite.split(".");
+			String finalString = array[1];
 
-		String finalString = "";
+			String emailRegex = "info@" + finalString;
+			Pattern pattern = Pattern.compile(emailRegex);
 
-		for (int i = 1; i < array.length; i++) {
-			finalString += array[i];
+			return pattern.matcher(email).matches();
 		}
-
-		String emailRegex = "info@" + finalString;
-		Pattern pattern = Pattern.compile(emailRegex);
-
-		return pattern.matcher(email).matches();
 	}
 }
