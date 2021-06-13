@@ -1,5 +1,6 @@
 package kodlamaio.hrms.business.concretes;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -28,13 +29,10 @@ public class JobPostingManager implements JobPostingService {
 	}
 
 	@Override
-	public Result add(JobPosting jobPosting) {
-		if (this.jobPostingDao.findByPosition(jobPosting.getPosition()) != null) {
-			return new ErrorResult(Messages.existInRecords);
-		} else {
-			jobPostingDao.save(jobPosting);
-			return new SuccessResult(Messages.successfullyAdded);
-		}
+	public Result add(JobPosting jobPosting) {	
+		jobPostingDao.save(jobPosting);			
+		return new SuccessResult(Messages.successfullyAdded);
+
 	}
 
 	@Override
@@ -51,5 +49,39 @@ public class JobPostingManager implements JobPostingService {
 	@Override
 	public DataResult<List<JobPosting>> getAll() {
 		return new SuccessDataResult<List<JobPosting>>(jobPostingDao.findAll(), "İş ilanları listelendi.");
+	}
+
+	@Override
+	public DataResult<List<JobPosting>> getByPosition(String position) {		
+		return new SuccessDataResult<List<JobPosting>>(jobPostingDao.getByPosition(position));
+	}
+
+	@Override
+	public DataResult<JobPosting> getById(int id) {
+		return new SuccessDataResult<JobPosting>(jobPostingDao.getById(id));
+	}
+
+	@Override
+	public DataResult<List<JobPosting>> getByActiveTrue() {
+		return new SuccessDataResult<List<JobPosting>>(jobPostingDao.getByActiveTrue());
+	}
+
+	@Override
+	public DataResult<List<JobPosting>> getByLastModifiedAndActiveTrue(LocalDate date) {
+		return new SuccessDataResult<List<JobPosting>>(jobPostingDao.getByLastModifiedAndActiveTrue(date));
+	}
+
+	@Override
+	public DataResult<JobPosting> updateJobPostingActiveStatusById(int id, boolean status) {
+		JobPosting jobPosting = this.jobPostingDao.getById(id);
+		jobPosting.setActive(status);
+		this.jobPostingDao.save(jobPosting);
+		
+		return new SuccessDataResult<JobPosting>(jobPosting, "Status updated");
+	}
+
+	@Override
+	public DataResult<List<JobPosting>> getByActiveTrueAndEmployer_Id(int id) {		
+		return new SuccessDataResult<List<JobPosting>>(this.jobPostingDao.getByActiveTrueAndEmployer_Id(id));
 	}
 }
